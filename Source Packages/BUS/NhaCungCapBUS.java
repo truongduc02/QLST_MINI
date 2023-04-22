@@ -23,7 +23,7 @@ public class NhaCungCapBUS {
     }
     public NhaCungCapDTO getById(NhaCungCapDTO ncc)
     {
-        return nhacungcapDAO.selectById();
+        return nhacungcapDAO.selectById(ncc);
     }
     public void delete(NhaCungCapDTO ncc)
     {

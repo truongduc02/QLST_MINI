@@ -109,10 +109,10 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
         for(int i=0;i<4;i++)
         {
            buttons[i]=new JLabel(arrBtn[i]);
-           buttons[i].setBounds(150, toadoyButton, 100, 25);
-           buttons[i].setFont(new Font("Serif",Font.BOLD,20));
+           buttons[i].setBounds(100, toadoyButton, 100, 25);
+           buttons[i].setFont(new Font("Serif",Font.BOLD,18));
            textfields[i]=new JTextField();
-           textfields[i].setBounds(250, toadoyButton, 500, 25);
+           textfields[i].setBounds(200, toadoyButton, 550, 25);
            textfields[i].setFont(new Font("Serif",0,15));
            textfields[i].setHorizontalAlignment(JTextField.CENTER);
            toadoyButton+=30; 
@@ -155,33 +155,6 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
         add(btnedit);
         add(btndelete);
         //add(btnchonanh);
-       
-        filter= new JPanel();
-        filter.setLayout(null);
-        filter.setBounds(0,310,1300-220,50);
-        add(filter);
-        
-        lbmasp= new JLabel("Mã NCC");
-        lbmasp.setBounds(250,15,60,25);
-        lbmasp.setFont(new Font("Serif",0,15));
-        tfmasp= new JTextField();
-        tfmasp.setBounds(310,15, 100, 25);
-        lbloaisp= new JLabel("Tên NCC");
-        lbloaisp.setBounds(420,15 ,60, 25);
-        lbloaisp.setFont(new Font("Serif",0,15));
-        tfloaisp= new JTextField();
-        tfloaisp.setBounds(490, 15, 270, 25);
-        
-        filter.add(lbmasp);
-        filter.add(tfmasp);
-        filter.add(lbloaisp);
-        filter.add(tfloaisp);
-        
-        btnsearch = new JLabel();
-        btnsearch.setBounds(790, 0, 40, 40);
-        btnsearch.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnSearch_40px.png")));
-        btnsearch.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        filter.add(btnsearch);
         
         nhacungcapBus = new NhaCungCapBUS();
         String mean[][]= null;
@@ -215,7 +188,7 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
         });
        
        jScrollPane1 = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-       jScrollPane1.setBounds(80, 380,920, 250);
+       jScrollPane1.setBounds(80, 330,920, 300);
        jScrollPane1.setViewportView(ds);
        getDsncc();
        add(jScrollPane1);

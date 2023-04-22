@@ -14,7 +14,6 @@ public class ChungLoaiDTO {
     {
         
     }
-
     public ChungLoaiDTO(String MaLoai, String TenLoai) {
         this.MaLoai = MaLoai;
         this.TenLoai = TenLoai;

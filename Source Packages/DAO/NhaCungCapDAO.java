@@ -109,11 +109,11 @@ public class NhaCungCapDAO implements DaoInterface<NhaCungCapDTO> {
     }
 
     @Override
-    public NhaCungCapDTO selectById() {
+    public NhaCungCapDTO selectById(NhaCungCapDTO v) {
          NhaCungCapDTO ncc = null;
         try {
             Connection con=(Connection) new MySQLConnect().getConnection();
-            String sql = "SELECT * FROM nha_cc WHERE MaNcc='"+ncc.getMaNcc()+"'" ;
+            String sql = "SELECT * FROM nha_cc WHERE MaNcc='"+v.getMaNcc()+"'" ;
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {

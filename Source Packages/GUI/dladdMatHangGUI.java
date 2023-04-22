@@ -55,12 +55,12 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.JDialog;
 
-public class dlMatHangGUI extends JDialog {
-    public dlMatHangGUI()
+public class dladdMatHangGUI extends JDialog {
+    public dladdMatHangGUI()
     {
         init();
     }
-    private JLabel title;
+    private JLabel title,btnadd;
     private JLabel buttons[];
     private JTextField textfields[];
     public void init()
@@ -93,6 +93,11 @@ public class dlMatHangGUI extends JDialog {
            add(buttons[i]); 
            add(textfields[i]);
         }
+        btnadd= new JLabel();
+        btnadd.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnAdd_150px.png")));
+        btnadd.setBounds(180, 570,200, 50);
+        btnadd.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        add(btnadd);
     }
     
 }

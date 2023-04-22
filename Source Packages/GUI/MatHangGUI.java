@@ -4,9 +4,16 @@
  */
 package GUI;
 
+import BUS.DonViBUS;
+import BUS.LoaiHangBUS;
 import javax.swing.JPanel;
 //import BUS.LoaiBUS;
 //import BUS.NsxBUS;
+import BUS.MatHangBUS;
+import DTO.MatHangDTO;
+import DAO.MatHangDAO;
+import DTO.DonViDTO;
+import DTO.LoaiHangDTO;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -27,6 +34,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 //import DTO.SanPhamDTO;
 //import BUS.SanPhamBUS;
 //import DTO.LoaiDTO;
@@ -44,6 +56,7 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -71,14 +84,20 @@ public class MatHangGUI extends JPanel implements MouseListener{
         DEFALUT_WIDTH=width;
         init();
     }
-    private JTable tb1;
     private JScrollPane jScrollPane1;
+    private DecimalFormat dcf = new DecimalFormat("###,###");
     private JLabel title,btnchonanh,txtrefresh,txtsearch,img,btnadd,btnedit,btndelete,lbmasp,lbloaisp,lbgiafrom,lbgiato,btnsearch,btnxuatfile,btnnhapfile;
     private JLabel buttons[];
     private JTextField textfields[],tftimkiem,tfmasp,tfloaisp,tfgiafrom,tfgiato;
     private ImageIcon icon1;
     private JPanel filter;
-    private dlMatHangGUI dl;
+    private dladdMatHangGUI dl;
+    private dleditMatHangGUI dl2;
+    private JTable ds;
+    private DefaultTableModel tb1;
+    private MatHangBUS mathangBUS;
+    private String[] title1={"Mã SP","Tên SP","Loại SP","Số lượng","Đơn vị tính","Đơn giá"};
+    private String []TTSP=new String[0];
     public void init()
     {
         setLayout(null);
@@ -103,11 +122,11 @@ public class MatHangGUI extends JPanel implements MouseListener{
         for(int i=0;i<6;i++)
         {
            buttons[i]=new JLabel(arrBtn[i]);
-           buttons[i].setBounds(200, toadoyButton, 100, 25);
-           buttons[i].setFont(new Font("Serif",Font.BOLD,20));
+           buttons[i].setBounds(80, toadoyButton, 100, 25);
+           buttons[i].setFont(new Font("Serif",Font.BOLD,18));
            textfields[i]=new JTextField();
-           textfields[i].setBounds(300, toadoyButton, 200, 25);
-           textfields[i].setFont(new Font("Serif",0,20));
+           textfields[i].setBounds(180, toadoyButton, 320, 25);
+           textfields[i].setFont(new Font("Serif",0,15));
            toadoyButton+=30; 
            add(buttons[i]); 
            add(textfields[i]);
@@ -140,7 +159,7 @@ public class MatHangGUI extends JPanel implements MouseListener{
         btnadd.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnAdd_150px.png")));
         btnadd.setBounds(800, 65,200, 50);
         btnadd.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        dl= new dlMatHangGUI();
+        dl= new dladdMatHangGUI();
         btnadd.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -152,6 +171,14 @@ public class MatHangGUI extends JPanel implements MouseListener{
         btnedit.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnEdit_150px.png")));
         btnedit.setBounds(800, 115,200, 50);
         btnedit.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        dl2=new dleditMatHangGUI();
+        btnedit.addMouseListener(new MouseAdapter (){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                dl2.setVisible(true);
+            }
+           
+        });
         btndelete = new JLabel();
         btndelete.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnDelete_150px.png")));
         btndelete.setBounds(800, 165,200, 50);
@@ -206,38 +233,90 @@ public class MatHangGUI extends JPanel implements MouseListener{
         btnsearch.setCursor(new Cursor(Cursor.HAND_CURSOR));
         filter.add(btnsearch);
         
-          
-       tb1= new JTable();
-       tb1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {             
-            },
-            new String [] {
-                "Mã mặt hàng", "Tên mặt hàng", "Loại mặt hàng","Số lượng", "Đơn vị tính","Đơn giá"
-            }
-        ));
-       tb1.getTableHeader().setForeground(Color.BLACK);
-       tb1.getTableHeader().setBackground(new Color(0x29B6F6));
-       tb1.getTableHeader().setFont(new Font("Serif",Font.BOLD,18));
-       tb1.setFont(new Font("Serif",0,16));
-       tb1.setRowHeight(25);
+         
+       
+       
+        mathangBUS = new MatHangBUS();
+        String mean[][]= null;
+        tb1= new DefaultTableModel(mean,title1);
+        
+        ds = new JTable(tb1);
+        ds.setFont(new Font("Serif",0,15));
+        ds.getTableHeader().setForeground(Color.white);
+	ds.getTableHeader().setBackground(new Color(52, 152, 219));
+	ds.getTableHeader().setFont(new Font("erif", Font.BOLD, 15));
+	ds.getTableHeader().setPreferredSize(new Dimension(700,30));
+	ds.setRowHeight(25);
+        ds.getColumnModel().getColumn(0).setPreferredWidth(10);
+	ds.getColumnModel().getColumn(1).setPreferredWidth(200);
+	ds.getColumnModel().getColumn(2).setPreferredWidth(100);
+	ds.getColumnModel().getColumn(3).setPreferredWidth(10);
+        ds.getColumnModel().getColumn(4).setPreferredWidth(10);
+        ds.getColumnModel().getColumn(5).setPreferredWidth(100);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+	centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        ds.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        ds.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        ds.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+        ds.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+        ds.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+        ds.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
+        ds.addMouseListener(new MouseAdapter(){
+            public void mouseClicked(MouseEvent e)
+             {
+                int i = ds.getSelectedRow();
+                
+                textfields[0].setText(ds.getModel().getValueAt(i, 0).toString());
+                textfields[1].setText(ds.getModel().getValueAt(i, 1).toString());
+                textfields[2].setText(ds.getModel().getValueAt(i, 2).toString()); 
+                textfields[3].setText(ds.getModel().getValueAt(i, 3).toString());   
+                textfields[4].setText(ds.getModel().getValueAt(i, 4).toString());    
+                textfields[5].setText(ds.getModel().getValueAt(i, 5).toString());    
+             }
+        });
        
        jScrollPane1 = new javax.swing.JScrollPane();
        jScrollPane1.setBounds(80, 380,900, 250);
-       jScrollPane1.setViewportView(tb1);
+       jScrollPane1.setViewportView(ds);
        add(jScrollPane1);
+       getDSsp();
        
        btnnhapfile= new JLabel();
-       btnnhapfile.setBounds(10, 80, 151, 44);
+       btnnhapfile.setBounds(800, 215, 151, 44);
        btnnhapfile.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnNhapExcel.png")));
        btnnhapfile.setCursor(new Cursor(Cursor.HAND_CURSOR));
        add(btnnhapfile);
        btnxuatfile= new JLabel();
-       btnxuatfile.setBounds(10, 130, 151, 44);
+       btnxuatfile.setBounds(800, 260, 151, 44);
        btnxuatfile.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnXuatExcel.png")));
        btnxuatfile.setCursor(new Cursor(Cursor.HAND_CURSOR));
        add(btnxuatfile);
        
     }
+    public void themphantuvaomang(String s)
+    {
+        int l =TTSP.length;
+        TTSP=Arrays.copyOf(TTSP, l+1);
+        TTSP[l]=s;
+    }
+    public void getDSsp() {
+//		{"Mã SP","Tên SP","Loại SP","Số lượng","Đơn vị tính","Đơn giá"};
+		DefaultTableModel model = (DefaultTableModel) ds.getModel();
+		for(int i=0;i<mathangBUS.getList().size();i++) {
+			themphantuvaomang(mathangBUS.getList().get(i).getMaMh());
+			themphantuvaomang(mathangBUS.getList().get(i).getTenMh());
+                        LoaiHangDTO lh= new LoaiHangDTO();
+                        lh.setMaLh(mathangBUS.getList().get(i).getMaLH());
+                        themphantuvaomang(LoaiHangBUS.getIntance().getLoaiHangByID(lh).getTenLh());
+                        themphantuvaomang((mathangBUS.getList().get(i).getSlNhap()-mathangBUS.getList().get(i).getSlBan())+"");
+                        DonViDTO dv=new DonViDTO();
+			dv.setMaDvt(mathangBUS.getList().get(i).getMaDVT());
+			themphantuvaomang(DonViBUS.getIntance().getDonViByID(dv).getTenDvt());
+                        themphantuvaomang(dcf.format(mathangBUS.getList().get(i).getGiaBan()));
+			model.addRow(TTSP);
+			TTSP= new String[0];
+		}
+	}
 
     @Override
     public void mouseClicked(MouseEvent e) {

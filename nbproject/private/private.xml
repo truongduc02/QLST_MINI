@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
+        <file>
+            <url>Source%20Packages/DAO/MatHangDAO.java</url>
+            <bookmark id="1">
+                <name/>
+                <line>34</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/DAO/MySQLConnect.java</file>
-            <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/GUI/PhanQuyenGUI.java</file>
+            <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/DTO/MatHangDTO.java</file>
             <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/GUI/MatHangGUI.java</file>
-            <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/DTO/NhaCungCapDTO.java</file>
+            <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/DAO/NhaCungCapDAO.java</file>
             <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/GUI/QLSieuThi.java</file>
-            <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/GUI/NhaCungCapGUI.java</file>
-            <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/GUI/NhanVienGUI.java</file>
             <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/DAO/MatHangDAO.java</file>
+            <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/GUI/NhaCungCapGUI.java</file>
             <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/DAO/DaoInterface.java</file>
-            <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/GUI/KhachHangGUI.java</file>
+            <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/GUI/dlMatHangGUI.java</file>
             <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/DAO/NhanVienDAO.java</file>
+            <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/BUS/MatHangBUS.java</file>
+            <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/BUS/NhaCungCapBUS.java</file>
         </group>
     </open-files>
 </project-private>

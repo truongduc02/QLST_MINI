@@ -15,30 +15,36 @@ public class MatHangDTO {
 	private int vat;
 	private String maLH;
 	private String maDVT;
+        private String img;
 	private java.sql.Date datengsx;
 	private java.sql.Date datehsd;
 	private java.sql.Date datengaynhap;
 	public MatHangDTO() {
 		
 	}
-	public MatHangDTO(String maMh, String tenMh, double giaMua, double giaBan, Date ngaySX, Date hsd, int slNhap,
-			int slBan, Date ngayNhap, int vat, String maLH, String maDVT) {
-		this.maMh = maMh;
-		this.tenMh = tenMh;
-		this.giaMua = giaMua;
-		this.giaBan = giaBan;
-		this.ngaySX = ngaySX;
-		this.hsd = hsd;
-		this.slNhap = slNhap;
-		this.slBan = slBan;
-		this.ngayNhap = ngayNhap;
-		this.vat = vat;
-		this.maLH = maLH;
-		this.maDVT = maDVT;
-		setDatengsx(ngaySX);
-		setDatehsd(hsd);
-		setDatengaynhap(ngayNhap);
-	}
+
+    public MatHangDTO(String maMh, String tenMh, double giaMua, double giaBan, Date ngaySX, Date hsd, int slNhap, int slBan, Date ngayNhap, int vat, String maLH, String maDVT, String img, java.sql.Date datengsx, java.sql.Date datehsd, java.sql.Date datengaynhap) {
+        this.maMh = maMh;
+        this.tenMh = tenMh;
+        this.giaMua = giaMua;
+        this.giaBan = giaBan;
+        this.ngaySX = ngaySX;
+        this.hsd = hsd;
+        this.slNhap = slNhap;
+        this.slBan = slBan;
+        this.ngayNhap = ngayNhap;
+        this.vat = vat;
+        this.maLH = maLH;
+        this.maDVT = maDVT;
+        this.img = img;
+        this.datengsx = datengsx;
+        this.datehsd = datehsd;
+        this.datengaynhap = datengaynhap;
+        setDatengsx(ngaySX);
+	setDatehsd(hsd);
+	setDatengaynhap(ngayNhap);
+    }
+	
 	public String getMaMh() {
 		return maMh;
 	}
@@ -115,26 +121,36 @@ public class MatHangDTO {
 		return datengsx;
 	}
 	public void setDatengsx(Date date) {
-		this.datengsx= new java.sql.Date(date.getTime());
+                    this.datengsx = new java.sql.Date(date.getTime());
 	}
 	public java.sql.Date getDatehsd() {
 		return datehsd;
 	}
 	public void setDatehsd(Date date) {
-		this.datehsd= new java.sql.Date(date.getTime());
+                    this.datehsd = new java.sql.Date(date.getTime());
+
 	}
 	public java.sql.Date getDatengaynhap() {
 		return datengaynhap;
 	}
 	public void setDatengaynhap(Date date) {
-		this.datengaynhap= new java.sql.Date(date.getTime());
+                    this.datengaynhap = new java.sql.Date(date.getTime());
 	}
+        
 //	@Override
 //	public String toString() {
 //		return "DTO_MatHang [maMh=" + maMh + ", tenMh=" + tenMh + ", giaMua=" + giaMua + ", giaBan=" + giaBan
 //				+ ", slNhap=" + slNhap + ", slBan=" + slBan + ", vat=" + vat + ", maLH=" + maLH + ", maDVT=" + maDVT
 //				+ ", datengsx=" + datengsx + ", datehsd=" + datehsd + ", datengaynhap=" + datengaynhap + "]";
 //	}
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
 	
 	
 }
