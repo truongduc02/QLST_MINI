@@ -43,34 +43,18 @@ import java.text.SimpleDateFormat;
 //import BUS.SanPhamBUS;
 //import DTO.LoaiDTO;
 //import DTO.NsxDTO;
-import java.awt.Choice;
-import java.awt.Color;
-import java.awt.PopupMenu;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+
 import java.util.Arrays;
+import java.util.Date;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JSeparator;
-import javax.swing.RowFilter;
+
 import javax.swing.SwingConstants;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
+
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+
 
 
 /**
@@ -86,6 +70,7 @@ public class MatHangGUI extends JPanel implements MouseListener{
     }
     private JScrollPane jScrollPane1;
     private DecimalFormat dcf = new DecimalFormat("###,###");
+    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     private JLabel title,btnchonanh,txtrefresh,txtsearch,img,btnadd,btnedit,btndelete,lbmasp,lbloaisp,lbgiafrom,lbgiato,btnsearch,btnxuatfile,btnnhapfile;
     private JLabel buttons[];
     private JTextField textfields[],tftimkiem,tfmasp,tfloaisp,tfgiafrom,tfgiato;
@@ -93,11 +78,13 @@ public class MatHangGUI extends JPanel implements MouseListener{
     private JPanel filter;
     private dladdMatHangGUI dl;
     private dleditMatHangGUI dl2;
-    private JTable ds;
-    private DefaultTableModel tb1;
+    public JTable ds,dsfull;
+    public DefaultTableModel tb1,tbfull;
     private MatHangBUS mathangBUS;
     private String[] title1={"Mã SP","Tên SP","Loại SP","Số lượng","Đơn vị tính","Đơn giá"};
+    private String[] titlefull={"Mã SP","Tên SP","giamua","giaban","ngaysx","hansudung","slnhap","slban","ngaynhap","vat","malh","madvt"};
     private String []TTSP=new String[0];
+    private String []TTSPFull = new String[0];
     public void init()
     {
         setLayout(null);
@@ -114,6 +101,13 @@ public class MatHangGUI extends JPanel implements MouseListener{
          txtrefresh.setBounds(650, 10,50, 50);
         txtrefresh.setCursor(new Cursor(Cursor.HAND_CURSOR));
          add(txtrefresh);
+         txtrefresh.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                cleanView();
+            }
+             
+         });
          
         buttons=new JLabel[6];
         textfields= new JTextField[6];
@@ -175,7 +169,7 @@ public class MatHangGUI extends JPanel implements MouseListener{
         btnedit.addMouseListener(new MouseAdapter (){
             @Override
             public void mouseClicked(MouseEvent e) {
-                dl2.setVisible(true);
+                //dl2.setVisible(true);
             }
            
         });
@@ -183,6 +177,23 @@ public class MatHangGUI extends JPanel implements MouseListener{
         btndelete.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnDelete_150px.png")));
         btndelete.setBounds(800, 165,200, 50);
         btndelete.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btndelete.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                
+                MatHangDTO mh= new MatHangDTO();
+                mh.setMaMh(textfields[0].getText()); 
+                int i = JOptionPane.showConfirmDialog(null, "Xác nhận xóa","Alert",JOptionPane.YES_NO_OPTION);
+                if(i == 0)
+                {
+                      mathangBUS.delete(mh);
+                    loadData();
+                    cleanView();
+                }
+            }
+            
+            
+        });
 //        btnchonanh= new JLabel();
 //        btnchonanh.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnFile.png")));
 //        btnchonanh.setBounds(800,215,200,50);
@@ -271,7 +282,10 @@ public class MatHangGUI extends JPanel implements MouseListener{
                 textfields[2].setText(ds.getModel().getValueAt(i, 2).toString()); 
                 textfields[3].setText(ds.getModel().getValueAt(i, 3).toString());   
                 textfields[4].setText(ds.getModel().getValueAt(i, 4).toString());    
-                textfields[5].setText(ds.getModel().getValueAt(i, 5).toString());    
+                textfields[5].setText(ds.getModel().getValueAt(i, 5).toString());
+                
+                
+                
              }
         });
        
@@ -280,6 +294,7 @@ public class MatHangGUI extends JPanel implements MouseListener{
        jScrollPane1.setViewportView(ds);
        add(jScrollPane1);
        getDSsp();
+       
        
        btnnhapfile= new JLabel();
        btnnhapfile.setBounds(800, 215, 151, 44);
@@ -299,6 +314,7 @@ public class MatHangGUI extends JPanel implements MouseListener{
         TTSP=Arrays.copyOf(TTSP, l+1);
         TTSP[l]=s;
     }
+    
     public void getDSsp() {
 //		{"Mã SP","Tên SP","Loại SP","Số lượng","Đơn vị tính","Đơn giá"};
 		DefaultTableModel model = (DefaultTableModel) ds.getModel();
@@ -317,6 +333,7 @@ public class MatHangGUI extends JPanel implements MouseListener{
 			TTSP= new String[0];
 		}
 	}
+   
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -340,6 +357,34 @@ public class MatHangGUI extends JPanel implements MouseListener{
     @Override
     public void mouseExited(MouseEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    public void loadData()
+    {
+        tb1.setRowCount(0);
+        for(MatHangDTO mh: mathangBUS.getList())
+        {
+            Vector vec = new Vector();
+            vec.add(mh.getMaMh());
+            vec.add(mh.getTenMh());
+            vec.add(mh.getMaLH());
+            vec.add(mh.getSlNhap()-mh.getSlBan());
+            vec.add(mh.getMaDVT());
+            vec.add(mh.getGiaBan());
+            tb1.addRow(vec);
+        }
+        
+            //private String[] title1={"Mã SP","Tên SP","Loại SP","Số lượng","Đơn vị tính","Đơn giá"};
+    }
+    public void cleanView()
+    {
+        textfields[0].setText("");
+         textfields[1].setText("");
+         textfields[2].setText("");
+         textfields[3].setText("");
+         textfields[4].setText("");
+         textfields[5].setText("");
+         textfields[0].requestFocusInWindow();
+         ds.clearSelection();
     }
 
     

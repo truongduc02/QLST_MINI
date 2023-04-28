@@ -61,10 +61,11 @@ public class QLSieuThi {
        fr.add(scroll,BorderLayout.WEST);
        // fr.add(main,BorderLayout.CENTER);
        //fr.add(new NhanVienGUI(),BorderLayout.CENTER);
-       //fr.add(new MatHangGUI(1300),BorderLayout.CENTER);
+       fr.add(new MatHangGUI(1300),BorderLayout.CENTER);
        //fr.add(new KhachHangGUI(),BorderLayout.CENTER);
-       fr.add(new NhaCungCapGUI(1300),BorderLayout.CENTER);
+       //fr.add(new NhaCungCapGUI(1300),BorderLayout.CENTER);
        //fr.add(new PhanQuyenGUI(),BorderLayout.CENTER);
+       //fr.add(new NhapHangGUI(),BorderLayout.CENTER);
        fr.repaint();
        fr.validate();
     }

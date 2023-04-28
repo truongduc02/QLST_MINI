@@ -50,6 +50,7 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -74,7 +75,7 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
         DEFALUT_WIDTH=width;
         init();
     }
-    private JTable ds;
+    private JTable ds,tb2;
     private String []mangNcc= new String[0];
     private JScrollPane jScrollPane1;
     private JLabel title,btnchonanh,txtrefresh,txtsearch,img,btnadd,btnedit,btndelete,lbmasp,lbloaisp,lbgiafrom,lbgiato,btnsearch,btnxuatfile,btnnhapfile;
@@ -84,7 +85,8 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
     private JPanel filter;
     private NhaCungCapBUS nhacungcapBus;
     private String []title1= { "Mã NCC", "Tên NCC", "Địa chỉ", "Điện thoại"};
-    private DefaultTableModel tb1;
+    private DefaultTableModel tb1,model1;
+    private JComboBox cmbChoice;
     public void init()
     {
         setLayout(null);
@@ -95,11 +97,23 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
         title.setFont(new Font("Serif",Font.BOLD,25));
          add(title);
          
+
+         
          //icon= new ImageIcon("/images/refresh_40px.png");
          txtrefresh = new JLabel();
          txtrefresh.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/refresh_40px.png")));
          txtrefresh.setBounds(650, 10,50, 50);
         txtrefresh.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        txtrefresh.addMouseListener(new MouseAdapter(){
+            public void mouseClicked(MouseEvent e)
+             {
+                      loadDataLenBangSanPham();
+                      cleanView();
+                      tftimkiem.setText("");
+                      cmbChoice.setSelectedItem("Tên NCC");
+                        
+             }
+        });
          add(txtrefresh);
          
         buttons=new JLabel[6];
@@ -120,33 +134,92 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
            add(textfields[i]);
         }
         
+         txtsearch = new JLabel();
+        
+        cmbChoice = new JComboBox();
+        cmbChoice.setEditable(true);
+        cmbChoice.setFont(new Font("Serif",Font.PLAIN,14));
+        cmbChoice.addItem("Mã NCC");
+        cmbChoice.addItem("Tên NCC");
+        cmbChoice.addItem("Địa chỉ");
+        cmbChoice.addItem("SĐT");
+        cmbChoice.setBounds(210,270,120,25);
+        add(cmbChoice);
+        
        
         tftimkiem = new JTextField();
         tftimkiem.setBackground(Color.WHITE);
         //tftimkiem.setOpaque(false);
         tftimkiem.setBounds(new Rectangle(330, 270, 400, 25));
-        tftimkiem.setFont(new Font("Serif",0,20));
+        tftimkiem.setFont(new Font("Serif",0,15));
         add(tftimkiem);
         
-        txtsearch = new JLabel();
-        txtsearch.setBounds(new Rectangle(730, 262, 40, 40));
-        txtsearch.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/search_25px.png")));
-        txtsearch.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        add(txtsearch);
+        
+       textfields[0].setEditable(false);
         
         
         btnadd= new JLabel();
         btnadd.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnAdd_150px.png")));
         btnadd.setBounds(800, 65,200, 50);
         btnadd.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnadd.addMouseListener(new MouseAdapter(){
+            public void mouseClicked(MouseEvent e)
+             {
+                      int i= getmanhacungcap();
+                      i++;
+                      String number= String.valueOf(i);
+                      String maNCC= "NCC"+ number ;
+                        String tenNCC = textfields[1].getText();
+                        String diaChi = textfields[2].getText();
+                        String dienThoai = textfields[3].getText();
+                        NhaCungCapDTO ncc= new NhaCungCapDTO(maNCC, tenNCC, diaChi, dienThoai);
+                        nhacungcapBus.add(ncc);
+                        loadDataLenBangSanPham();
+                        cleanView();
+                        
+             }
+        });
         btnedit = new JLabel();
         btnedit.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnEdit_150px.png")));
         btnedit.setBounds(800, 115,200, 50);
-        btnedit.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnedit.setCursor(new Cursor(Cursor.HAND_CURSOR));      
+        btnedit.addMouseListener(new MouseAdapter(){
+            public void mouseClicked(MouseEvent e)
+             {
+                      String maNCC = textfields[0].getText();
+                        String tenNCC = textfields[1].getText();
+                        String diaChi = textfields[2].getText();
+                        String dienThoai = textfields[3].getText();
+                        
+                        NhaCungCapDTO ncc= new NhaCungCapDTO(maNCC, tenNCC, diaChi, dienThoai);
+                        nhacungcapBus.sua(ncc);
+                        loadDataLenBangSanPham();
+                        cleanView();
+                        
+             }
+        });
         btndelete = new JLabel();
         btndelete.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnDelete_150px.png")));
         btndelete.setBounds(800, 165,200, 50);
         btndelete.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btndelete.addMouseListener(new MouseAdapter(){
+            public void mouseClicked(MouseEvent e)
+             {
+                 String maNCC = textfields[0].getText();
+                        String tenNCC = textfields[1].getText();
+                        String diaChi = textfields[2].getText();
+                        String dienThoai = textfields[3].getText();
+                        NhaCungCapDTO ncc= new NhaCungCapDTO(maNCC, tenNCC, diaChi, dienThoai);
+                       int i = JOptionPane.showConfirmDialog(null, "Xác nhận xóa","Alert",JOptionPane.YES_NO_OPTION);
+                if(i == 0)
+                {
+                    nhacungcapBus.delete(ncc);
+                    loadDataLenBangSanPham();
+                    cleanView();
+                }
+                        
+             }
+        });
 //        btnchonanh= new JLabel();
 //        btnchonanh.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnFile.png")));
 //        btnchonanh.setBounds(800,215,200,50);
@@ -193,6 +266,54 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
        getDsncc();
        add(jScrollPane1);
        
+      
+       TableRowSorter<TableModel> rowSorter = new TableRowSorter<TableModel>(tb1);
+        ds.setRowSorter(rowSorter);
+        
+        tftimkiem.addFocusListener(new FocusAdapter(){
+            @Override
+            public void focusGained(FocusEvent e) 
+            {
+                txtsearch.setIcon(new ImageIcon("/images/search_25px.png"));
+                txtsearch.setBorder(createLineBorder(new Color(52,152,219))); // Đổi màu viền 
+            }
+            public void focusLost(FocusEvent e) //Trờ về như cũ
+            {
+                txtsearch.setIcon(new ImageIcon("/images/search_25px.png"));
+                txtsearch.setBorder(createLineBorder(Color.BLACK)); // Đổi màu viền 
+            }
+        });
+        tftimkiem.getDocument().addDocumentListener(new DocumentListener(){
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                String text = tftimkiem.getText();
+                int choice = cmbChoice.getSelectedIndex();
+                
+                if (text.trim().length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)"+ text +"", choice));
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                String text = tftimkiem.getText();
+                int choice = cmbChoice.getSelectedIndex();
+                
+                if (text.trim().length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)"+ text +"", choice));
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+            
+        });
        
        
     }
@@ -219,6 +340,49 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    public void cleanView() //Xóa trắng các TextField
+    {
+         textfields[0].setEditable(true);
+
+        textfields[0].setText("");
+         textfields[1].setText("");
+         textfields[2].setText("");
+         textfields[3].setText("");
+         textfields[0].requestFocusInWindow();
+         ds.clearSelection();
+    }
+     private void loadDataLenBangSanPham() {
+
+        tb1.setRowCount(0);
+
+        ArrayList<NhaCungCapDTO> ds = nhacungcapBus.getList();
+
+        DecimalFormat dcf = new DecimalFormat("###,###");
+
+        for (NhaCungCapDTO ncc : ds) {
+            Vector vec = new Vector();
+            vec.add(ncc.getMaNcc());
+            vec.add(ncc.getTenNcc());
+            vec.add(ncc.getDiachi());
+            vec.add(ncc.getDienthoai());
+
+            tb1.addRow(vec);
+        }
+    }
+   public int getmanhacungcap()
+   {
+       int maNCCmoinhat=0;
+       for(NhaCungCapDTO ncc: nhacungcapBus.getList()) {
+			String txtmaNcc=ncc.getMaNcc();
+			txtmaNcc=txtmaNcc.replace("NCC", "");
+			int maHD=Integer.parseInt(txtmaNcc);
+			if(maHD>maNCCmoinhat) {
+				maNCCmoinhat=maHD;
+			}
+		}
+       return maNCCmoinhat;
+   }
+   
     
 }
 
