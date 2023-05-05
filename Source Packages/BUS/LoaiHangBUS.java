@@ -26,4 +26,26 @@ public class LoaiHangBUS {
     public LoaiHangDTO getLoaiHangByID(LoaiHangDTO lh) {
 		return loaihangDAO.getIntance().selectById(lh);
 	}
+    public String laymatheotenloaihang(String tenloaihang)
+    {
+        String malh= null;
+        for(LoaiHangDTO mh : getList())
+        {
+            if(mh.getTenLh().equalsIgnoreCase(tenloaihang))
+            {
+                malh=mh.getMaLh();
+            }
+        }
+        return malh;
+    }
+    public String laytentheomaloaihang(String maloaihang)
+    {
+        String tenlh=null;
+        for(LoaiHangDTO lh: getList())
+        {
+            if(lh.getMaLh().equalsIgnoreCase(maloaihang))
+                tenlh=lh.getTenLh();
+        }
+        return tenlh;
+    }
 }

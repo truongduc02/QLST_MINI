@@ -45,7 +45,25 @@ public class DonViDAO implements DaoInterface<DonViDTO>{
 
     @Override
     public ArrayList<DonViDTO> selectAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         try {
+        	Connection con=new MySQLConnect().getConnection();
+                ArrayList<DonViDTO> listdv = new ArrayList<>();
+            String sql = "SELECT * FROM don_vi";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+            	DonViDTO dv = new DonViDTO();
+            	dv.setMaDvt(rs.getString(1));
+            	dv.setTenDvt(rs.getString(2));
+                listdv.add(dv);
+            }
+            MySQLConnect.closeConnection(con);
+               return listdv;
+        } catch (SQLException ex) {
+        	ex.printStackTrace();
+        	System.out.println("thất bại");
+            return null;        
+        }
     }
 
     @Override

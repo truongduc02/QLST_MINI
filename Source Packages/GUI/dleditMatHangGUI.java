@@ -4,7 +4,11 @@
  */
 package GUI;
 
+import BUS.DonViBUS;
+import BUS.LoaiHangBUS;
 import BUS.MatHangBUS;
+import DTO.DonViDTO;
+import DTO.LoaiHangDTO;
 import DTO.MatHangDTO;
 import com.toedter.calendar.JCalendar;
 import javax.swing.JPanel;
@@ -47,6 +51,7 @@ import java.io.IOException;
 import java.util.Date;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JSeparator;
@@ -70,6 +75,10 @@ public class dleditMatHangGUI extends JDialog {
     public JTextField tfmamh,tften,tfgiamua,tfgiaban,tfslnhap,tfslban,tfvat,tfmalh,tfmadvt;
     public JDateChooser datengaysanxuat,datehansudung,datengaynhap;
         private MatHangBUS mathangBUS;
+        public  JComboBox cmbloaihang,cmbdvt;
+        public String temp="",temp1="",temp2="";
+        private MatHangGUI mhGUI;
+  
     public void init()
     {
         setTitle("Sửa chi  tiết sản phẩm");
@@ -169,12 +178,14 @@ public class dleditMatHangGUI extends JDialog {
         tfvat= new JTextField();
         tfvat.setBounds(160, 320, 200, 25);
         add(tfvat);
-        tfmalh= new JTextField();
-        tfmalh.setBounds(160, 350, 200, 25);
-        add(tfmalh);
-        tfmadvt= new JTextField();
-        tfmadvt.setBounds(160, 380, 200, 25);
-        add(tfmadvt);
+        cmbloaihang= new JComboBox();
+        cmbloaihang.setBounds(160, 350, 200, 25);
+        add(cmbloaihang);
+        cmbdvt= new JComboBox();
+        cmbdvt.setBounds(160, 380, 200, 25);
+        addDVT();
+        addLoaiHang();
+        add(cmbdvt);
         btnadd= new JLabel();
         btnadd.setIcon(new ImageIcon(dleditMatHangGUI.class.getResource("/images/btnEdit_150px.png")));
         btnadd.setBounds(50, 550,200, 50);
@@ -199,15 +210,17 @@ public class dleditMatHangGUI extends JDialog {
                 Date ngaynhap = datengaynhap.getDate();
                 String vat= tfvat.getText();
                 double sovat= Double.valueOf(vat);
-                String malh = tfmalh.getText();
-                String madvt = tfmadvt.getText();
-                String img=null;
-                MatHangGUI mhGUI= new  MatHangGUI(1300);
+                String malhtemp=cmbloaihang.getSelectedItem().toString();
+                    String malh = LoaiHangBUS.getIntance().laymatheotenloaihang(malhtemp);
+                    String madvttemp=cmbdvt.getSelectedItem().toString();
+                    String madvt = DonViBUS.getIntance().laymatheotendonvitinh(madvttemp);
+                String img=temp2;
                 MatHangDTO mh= new MatHangDTO(Mamh,tenmh,sogiamua,sogiaban,ngaysx,hansudung,soslnhap,soslban,ngaynhap,sovat,malh,madvt,img);
                 mathangBUS.capnhat(mh);
-                mhGUI.loadData();
-                //cleanView();
-                setVisible(false);
+                 MatHangGUI mhGUI= new MatHangGUI(1300);
+                    mhGUI.getDSSPFull();
+                cleanView();
+                //setVisible(false);
             }
             
             
@@ -219,6 +232,38 @@ public class dleditMatHangGUI extends JDialog {
         btnimg.setBounds(250,550,200,50);
         btnimg.setCursor(new Cursor(Cursor.HAND_CURSOR));
         add(btnimg);
+        btnimg.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                mhGUI = new MatHangGUI(1300);
+                JFileChooser fc = new JFileChooser();
+                FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "JPG & PNG images", "jpg", "png");
+                fc.setFileFilter(filter);
+                int result = fc.showOpenDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION) 
+                {
+                    try {
+                        File file = fc.getSelectedFile(); //Lấy URL hình
+                        mhGUI.i = ImageIO.read(file); // Lấy hình
+                        //C:\Users\Admin\OneDrive\Documents\NetBeansProjects\QLST_MINI\Source Packages\images\bau.jpg
+                        temp=mathangBUS.getAnh(mhGUI.HinhAnh);
+                        
+                        
+                        temp2=file.toString().substring(84, file.toString().length());
+         
+                        // Thay đổi hình hiển thị
+                        ImageIcon icon = new ImageIcon(mhGUI.i.getScaledInstance(215, 180, Image.SCALE_SMOOTH));
+                        mhGUI.img.setIcon(icon);
+                        
+                        revalidate();
+                        repaint();
+                    } catch (IOException ex) {
+                        Logger.getLogger(dladdMatHangGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
     }
 //    public void loadData()
 //    {
@@ -238,6 +283,41 @@ public class dleditMatHangGUI extends JDialog {
 //        }
 //        
 //    }
+    public void cleanView()
+    {
+        tfmamh.setText("");
+        tften.setText("");
+        tfgiamua.setText("");
+        tfgiaban.setText("");
+        tfslnhap.setText("");
+        tfslban.setText("");
+        tfvat.setText("");
+        cmbloaihang.setSelectedItem("Chọn loại");
+        cmbdvt.setSelectedItem("Chọn ĐVT");
+    }
+    public void addLoaiHang()
+    {
+        Vector<String> vec= new Vector();
+        vec.add("Chọn loại");
+        for(LoaiHangDTO lh: LoaiHangBUS.getIntance().getList())
+        {
+            vec.add(lh.getTenLh());
+        }
+        DefaultComboBoxModel<String>cbmodel=new DefaultComboBoxModel<>(vec);
+        cmbloaihang.setModel(cbmodel);
+    }
+    public void addDVT()
+    {
+        Vector<String> vec= new Vector();
+        vec.add("Chọn ĐVT");
+        for(DonViDTO lh: DonViBUS.getIntance().getList())
+        {
+            vec.add(lh.getTenDvt());
+        }
+        DefaultComboBoxModel<String>cbmodel=new DefaultComboBoxModel<>(vec);
+        cmbdvt.setModel(cbmodel);
+    }
+   
 }
 
 

@@ -15,7 +15,7 @@ public class MatHangDTO {
 	private double vat;
 	private String maLH;
 	private String maDVT;
-        private String img=null;
+        private String img;
 	public MatHangDTO() {
 		
 	}

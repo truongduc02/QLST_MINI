@@ -4,7 +4,11 @@
  */
 package GUI;
 
+import BUS.DonViBUS;
+import BUS.LoaiHangBUS;
 import BUS.MatHangBUS;
+import DTO.DonViDTO;
+import DTO.LoaiHangDTO;
 import DTO.MatHangDTO;
 import com.toedter.calendar.JCalendar;
 import javax.swing.JPanel;
@@ -45,9 +49,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JSeparator;
@@ -72,8 +78,10 @@ public class dladdMatHangGUI extends JDialog {
     private JDateChooser datengaysanxuat,datehansudung,datengaynhap;
         private MatHangBUS mathangBUS= new MatHangBUS();
         private DecimalFormat dcf = new DecimalFormat("###,###");
+        private JComboBox cmbloaihang,cmbdvt;
+        private String temp="hi",temp2="";
+        
     //private MatHangGUI mhGUI;
-        MatHangGUI mhGUI;
     public void init()
     {
         setTitle("Thêm chi  tiết sản phẩm");
@@ -173,12 +181,14 @@ public class dladdMatHangGUI extends JDialog {
         tfvat= new JTextField();
         tfvat.setBounds(160, 320, 200, 25);
         add(tfvat);
-        tfmalh= new JTextField();
-        tfmalh.setBounds(160, 350, 200, 25);
-        add(tfmalh);
-        tfmadvt= new JTextField();
-        tfmadvt.setBounds(160, 380, 200, 25);
-        add(tfmadvt);
+        cmbloaihang= new JComboBox();
+        cmbloaihang.setBounds(160, 350, 200, 25);
+        add(cmbloaihang);
+        cmbdvt= new JComboBox();
+        cmbdvt.setBounds(160, 380, 200, 25);
+        addDVT();
+        addLoaiHang();
+        add(cmbdvt);
         btnadd= new JLabel();
         btnadd.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnAdd_150px.png")));
         btnadd.setBounds(50, 550,200, 50);
@@ -188,6 +198,7 @@ public class dladdMatHangGUI extends JDialog {
             btnadd.addMouseListener(new MouseAdapter(){
             @Override
             public void mousePressed(MouseEvent e) {
+                
                 String Mamh = tfmamh.getText();
                     String tenmh = tften.getText();
                     String giamua = tfgiamua.getText();
@@ -203,19 +214,18 @@ public class dladdMatHangGUI extends JDialog {
                     Date ngaynhap = datengaynhap.getDate();
                     String vat= tfvat.getText();
                     double sovat= Double.valueOf(vat);
-                    String malh = tfmalh.getText();
-                    String madvt = tfmadvt.getText();
-                    String img=null;
+                    String malhtemp=cmbloaihang.getSelectedItem().toString();
+                    String malh = LoaiHangBUS.getIntance().laymatheotenloaihang(malhtemp);
+                    String madvttemp=cmbdvt.getSelectedItem().toString();
+                    String madvt = DonViBUS.getIntance().laymatheotendonvitinh(madvttemp);
+                    String img=temp2;
                     MatHangDTO mh= new MatHangDTO(Mamh,tenmh,sogiamua,sogiaban,ngaysx,hansudung,soslnhap,soslban,ngaynhap,sovat,malh,madvt,img);
                     mathangBUS.add(mh);
-                    //loadData();
-                    //setVisible(false);
+                    MatHangGUI mhGUI= new MatHangGUI(1300);
+                    mhGUI.getDSSPFull();
+                     mhGUI.dem++;
                     cleanView();
             }
-                
-                    
-                
-
             });
         
         btnimg= new JLabel();
@@ -223,30 +233,76 @@ public class dladdMatHangGUI extends JDialog {
         btnimg.setBounds(250,550,200,50);
         btnimg.setCursor(new Cursor(Cursor.HAND_CURSOR));
         add(btnimg);
-    }
-    public void loadData()
-    {
-        mhGUI= new  MatHangGUI(1300);
-        mhGUI.tb1.setRowCount(0);
-        ArrayList<MatHangDTO> ds = mathangBUS.getList();
-        for(MatHangDTO mh: ds)
-        {
-            Vector vec = new Vector();
-            vec.add(mh.getMaMh());
-            vec.add(mh.getTenMh());
-            vec.add(mh.getMaLH());
-            vec.add(mh.getSlNhap()-mh.getSlBan());
-            vec.add(mh.getMaDVT());
-            vec.add(mh.getGiaBan());
-            mhGUI.tb1.addRow(vec);
-        }
-        
+        btnimg.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                MatHangGUI mhGUI = new MatHangGUI(1300);
+                JFileChooser fc = new JFileChooser();
+                FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "JPG & PNG images", "jpg", "png");
+                fc.setFileFilter(filter);
+                int result = fc.showOpenDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION) 
+                {
+                    try {
+                        File file = fc.getSelectedFile(); //Lấy URL hình
+                        mhGUI.i = ImageIO.read(file); // Lấy hình
+                        mhGUI.HinhAnh = tfmamh.getText();
+                        temp=mathangBUS.getAnh(mhGUI.HinhAnh);
+                        System.out.println(file);
+                        
+                         temp2=file.toString().substring(84, file.toString().length());
+                        
+                        // Thay đổi hình hiển thị
+                        mhGUI.img.setText("");
+                        mhGUI.img.setIcon(new ImageIcon(mhGUI.i.getScaledInstance(200, 230, Image.SCALE_DEFAULT)));
+                        
+                        revalidate();
+                        repaint();
+                    } catch (IOException ex) {
+                        Logger.getLogger(dladdMatHangGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
     }
     public void cleanView()
+    {
+        
+        tfmamh.setText("");
+        tften.setText("");
+        tfgiamua.setText("");
+        tfgiaban.setText("");
+        tfslnhap.setText("");
+        tfslban.setText("");
+        tfvat.setText("");
+        cmbloaihang.setSelectedItem("Chọn loại");
+        cmbdvt.setSelectedItem("Chọn ĐVT");
+    }
+    public void addLoaiHang()
+    {
+        Vector<String> vec= new Vector();
+        vec.add("Chọn loại");
+        for(LoaiHangDTO lh: LoaiHangBUS.getIntance().getList())
         {
-            
-            loadData();
+            vec.add(lh.getTenLh());
         }
+        DefaultComboBoxModel<String>cbmodel=new DefaultComboBoxModel<>(vec);
+        cmbloaihang.setModel(cbmodel);
+    }
+    public void addDVT()
+    {
+        Vector<String> vec= new Vector();
+        vec.add("Chọn ĐVT");
+        for(DonViDTO lh: DonViBUS.getIntance().getList())
+        {
+            vec.add(lh.getTenDvt());
+        }
+        DefaultComboBoxModel<String>cbmodel=new DefaultComboBoxModel<>(vec);
+        cmbdvt.setModel(cbmodel);
+    }
+    
+    
     
     
 }
