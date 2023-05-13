@@ -77,7 +77,7 @@ public class MatHangDAO implements DaoInterface<MatHangDTO>{
         int result =0;
         try {
             Connection con =(Connection) new MySQLConnect().getConnection();
-            String sql="UPDATE mat_hang SET TEN=?,GIAMUA=?,GIABAN=?,NGAY_SX=?,HAN_SU_DUNG=?,SL_NHAP=?,SL_BAN=?,NGAY_NHAP=?,VAT=?,MA_LH=?,MA_DVT=?,img=? WHERE MA_MH=?";
+            String sql="UPDATE mat_hang SET TEN=?,GIAMUA=?,GIABAN=?,NGAY_SX=?,HAN_SU_DUNG=?,SL_NHAP=?,VAT=?,MA_LH=?,MA_DVT=?,img=? WHERE MA_MH=?";
             PreparedStatement prep =con.prepareStatement(sql);
            
            prep.setString(1,t.getTenMh());
@@ -86,13 +86,11 @@ public class MatHangDAO implements DaoInterface<MatHangDTO>{
            prep.setTimestamp(4, new java.sql.Timestamp(t.getNgaySX().getTime()));
            prep.setTimestamp(5, new java.sql.Timestamp(t.getHsd().getTime()));
            prep.setDouble(6, t.getSlNhap());
-           prep.setDouble(7, t.getSlBan());
-           prep.setTimestamp(8, new java.sql.Timestamp(t.getNgayNhap().getTime()));
-           prep.setDouble(9, t.getVat());
-           prep.setString(10,t.getMaLH());
-           prep.setString(11,t.getMaDVT());
-           prep.setString(12,t.getImg());
-           prep.setString(13, t.getMaMh());
+           prep.setDouble(7, t.getVat());
+           prep.setString(8,t.getMaLH());
+           prep.setString(9,t.getMaDVT());
+           prep.setString(10,t.getImg());
+           prep.setString(11, t.getMaMh());
            result= prep.executeUpdate() ;
            if(result >0)
                result=1; 

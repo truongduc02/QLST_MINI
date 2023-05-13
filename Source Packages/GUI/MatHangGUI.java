@@ -103,13 +103,13 @@ public class MatHangGUI extends JPanel implements MouseListener,KeyListener{
     public DefaultTableModel tb1,tbfull;
     private MatHangBUS mathangBUS;
     private String[] title1={"Mã SP","Tên SP","Loại SP","Số lượng","Đơn vị tính","Đơn giá"};
-    private String[] titlefull={"Mã SP","Tên SP","giamua","giaban","ngaysx","hansudung","slnhap","slban","ngaynhap","vat","malh","madvt"};
+    private String[] titlefull={"Mã SP","Tên SP","giamua","giaban","ngaysx","hansudung","slnhap","vat","malh","madvt"};
     private String []TTSP=new String[0];
     private String []TTSPFull = new String[0];
     private File fileAnhSP;
     private JComboBox cmbloaihang;
     public BufferedImage i=null ;
-    public int dem;
+    public int dem,demfull;
     public void init()
     {
         setLayout(null);
@@ -186,6 +186,11 @@ public class MatHangGUI extends JPanel implements MouseListener,KeyListener{
             @Override
             public void mouseClicked(MouseEvent e) {
                 dl.setVisible(true);
+                int i= getmamathang();
+                i++;
+                String number=String.valueOf(i);
+                String Mamh="00"+number;
+                dl.tfmamh.setText(Mamh);
             }
          
         });
@@ -330,6 +335,11 @@ public class MatHangGUI extends JPanel implements MouseListener,KeyListener{
                 HinhAnh= textfields[0].getText();
                 ImageIcon newImage;
                 Image image;
+                String mamh=ds.getModel().getValueAt(i, 0).toString();
+                MatHangDTO mh= new MatHangDTO();
+                mh.setMaMh(mamh);
+                mh=mathangBUS.getById(mh);
+                
                 try{
                     newImage= new ImageIcon(getClass().getResource("/images/"+mathangBUS.getAnh(HinhAnh)));
                     image=(newImage).getImage().getScaledInstance(215, 180,Image.SCALE_SMOOTH);
@@ -342,33 +352,28 @@ public class MatHangGUI extends JPanel implements MouseListener,KeyListener{
                 newImage=new ImageIcon(image);
                 img.setIcon(newImage);
                 
-                dl2.tfmamh.setText(dsfull.getModel().getValueAt(i, 0).toString());
-                dl2.tften.setText(dsfull.getModel().getValueAt(i, 1).toString());
-                dl2.tfgiamua.setText(dsfull.getModel().getValueAt(i, 2).toString());
-                dl2.tfgiaban.setText(dsfull.getModel().getValueAt(i, 3).toString());
-                String ngaysanxuat= dsfull.getModel().getValueAt(i, 4).toString();
-                String ngayhansudung=dsfull.getModel().getValueAt(i, 5).toString();
-                String ngaynhap= dsfull.getModel().getValueAt(i, 8).toString();
+                dl2.tfmamh.setText(mh.getMaMh());
+                dl2.tften.setText(mh.getTenMh());
+                dl2.tfgiamua.setText(mh.getGiaMua()+"");
+                dl2.tfgiaban.setText(mh.getGiaBan()+"");
+                String ngaysanxuat= mh.getNgaySX().toString();
+                String ngayhansudung=mh.getHsd().toString();
                 java.util.Date ngaySX = new Date();
                 java.util.Date ngayHSD= new Date();
-                java.util.Date ngayNhap= new Date();
                 try {
                 ngaySX = new SimpleDateFormat("dd/MM/yyyy").parse(ngaysanxuat);
                 ngayHSD = new SimpleDateFormat("dd/MM/yyyy").parse(ngayhansudung);
-                ngayNhap= new SimpleDateFormat("dd/MM/yyyy").parse(ngaynhap);
                 //ngayKT = new SimpleDateFormat("dd/MM/yyyy").parse(end);
                 } catch (Exception ex) {
                     
                 }      
                 dl2.datengaysanxuat.setDate(ngaySX);
                 dl2.datehansudung.setDate(ngayHSD);
-                dl2.tfslnhap.setText(dsfull.getModel().getValueAt(i, 6).toString());
-                dl2.tfslban.setText(dsfull.getModel().getValueAt(i, 7).toString());
-                dl2.datengaynhap.setDate(ngayNhap);
-                dl2.tfvat.setText(dsfull.getModel().getValueAt(i, 9).toString());
-                String temp=dsfull.getModel().getValueAt(i, 10).toString();
+                dl2.tfslnhap.setText(mh.getSlNhap()+"");
+                dl2.tfvat.setText(mh.getVat()+"");
+                String temp=mh.getMaLH();
                 String tenlh=LoaiHangBUS.getIntance().laytentheomaloaihang(temp);
-                String temp2=dsfull.getModel().getValueAt(i, 11).toString();
+                String temp2=mh.getMaDVT();
                 String tendv=DonViBUS.getIntance().laytentheomadonvitinh(temp2);
                 dl2.cmbloaihang.setSelectedItem(tenlh);
                 dl2.cmbdvt.setSelectedItem(tendv);
@@ -381,8 +386,7 @@ public class MatHangGUI extends JPanel implements MouseListener,KeyListener{
        jScrollPane1.setViewportView(ds);
        add(jScrollPane1);
        getDSsp();
-       
-       getDSSPFull();
+      // getDSSPFull();
        
        btnnhapfile= new JLabel();
        btnnhapfile.setBounds(800, 215, 151, 44);
@@ -551,7 +555,6 @@ public class MatHangGUI extends JPanel implements MouseListener,KeyListener{
             tb1.addRow(vec);
         }
         
-            //private String[] title1={"Mã SP","Tên SP","Loại SP","Số lượng","Đơn vị tính","Đơn giá"};
     }
     public void cleanView()
     {
@@ -616,31 +619,6 @@ public class MatHangGUI extends JPanel implements MouseListener,KeyListener{
         TTSPFull[l]=s;
     }
 
-
- public void getDSSPFull()
-    {
-        DefaultTableModel model = (DefaultTableModel) dsfull.getModel();
-                dem=mathangBUS.getList().size();
-		for(int i=0;i<dem;i++) {
-			themphantuvaomangfull(mathangBUS.getList().get(i).getMaMh());
-			themphantuvaomangfull(mathangBUS.getList().get(i).getTenMh());
-                        themphantuvaomangfull(dcf.format(mathangBUS.getList().get(i).getGiaMua()));
-                        themphantuvaomangfull(dcf.format(mathangBUS.getList().get(i).getGiaBan()));
-                        themphantuvaomangfull(formatter.format(mathangBUS.getList().get(i).getNgaySX()));
-                        themphantuvaomangfull(formatter.format(mathangBUS.getList().get(i).getHsd()));
-                        themphantuvaomangfull(dcf.format(mathangBUS.getList().get(i).getSlNhap()));
-                        themphantuvaomangfull(dcf.format(mathangBUS.getList().get(i).getSlBan()));
-                        themphantuvaomangfull(formatter.format(mathangBUS.getList().get(i).getNgayNhap()));
-                        themphantuvaomangfull(dcf.format(mathangBUS.getList().get(i).getVat()));
-                        themphantuvaomangfull(mathangBUS.getList().get(i).getMaLH());
-                        themphantuvaomangfull(mathangBUS.getList().get(i).getMaDVT());
-                        themphantuvaomangfull(mathangBUS.getList().get(i).getImg());
-			model.addRow(TTSPFull);
-			TTSPFull= new String[0];
-		}
-
-    }
-
     @Override
     public void keyTyped(KeyEvent e) {
         //To change body of generated methods, choose Tools | Templates.
@@ -663,21 +641,20 @@ public class MatHangGUI extends JPanel implements MouseListener,KeyListener{
     public void keyReleased(KeyEvent e) {
          //To change body of generated methods, choose Tools | Templates.
     }
-     public void saveimg()
-    {
-        try{
-
-            if(i!=null)
-            {
-                File save= new File("/images/"+dl2.temp1);
-                ImageIO.write(i, "jpg", save);
-                i=null;
-            }
-        }catch(IOException ex)
-        {
-            Logger.getLogger(MatHangGUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+     
+      public int getmamathang()
+   {
+       int maMatHangmoinhat=0;
+       for(MatHangDTO mh: mathangBUS.getList()) {
+			String txtmaMatHang=mh.getMaMh();
+			int maHD=Integer.parseInt(txtmaMatHang);
+			if(maHD> maMatHangmoinhat) {
+				 maMatHangmoinhat=maHD;
+			}
+		}
+       return  maMatHangmoinhat;
+   }
+      
     
 
 

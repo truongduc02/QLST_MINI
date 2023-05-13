@@ -11,6 +11,7 @@ import DTO.DonViDTO;
 import DTO.LoaiHangDTO;
 import DTO.MatHangDTO;
 import com.toedter.calendar.JCalendar;
+import com.toedter.calendar.JDateChooser;
 import javax.swing.JPanel;
 //import BUS.LoaiBUS;
 //import BUS.NsxBUS;
@@ -43,12 +44,16 @@ import java.awt.Choice;
 import java.awt.Color;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import javax.imageio.ImageIO;
@@ -66,6 +71,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.JDialog;
+import javax.swing.border.Border;
 
 public class dladdMatHangGUI extends JDialog {
     public dladdMatHangGUI()
@@ -74,18 +80,20 @@ public class dladdMatHangGUI extends JDialog {
     }
     private  JLabel title,btnadd,btnimg;
     private JLabel txtmamh,txtten,txtgiamua,txtgiaban, txtngaysanxuat,txthansudung,txtslnhap,txtslban, txtngaynhap,txtvat,txtmalh,txtmadvt ;
-    private JTextField tfmamh,tften,tfgiamua,tfgiaban,tfslnhap,tfslban,tfvat,tfmalh,tfmadvt;
+    public JTextField tfmamh,tften,tfgiamua,tfgiaban,tfslnhap,tfslban,tfvat,tfmalh,tfmadvt;
     private JDateChooser datengaysanxuat,datehansudung,datengaynhap;
         private MatHangBUS mathangBUS= new MatHangBUS();
         private DecimalFormat dcf = new DecimalFormat("###,###");
         private JComboBox cmbloaihang,cmbdvt;
         private String temp="hi",temp2="";
+        private Border lineBorder = BorderFactory.createLineBorder(Color.BLACK, 1);
+        private JLabel tbgiamua,tbgiaban,tbslnhap,tbvat,tblh,tbdvt,tbten;
         
     //private MatHangGUI mhGUI;
     public void init()
     {
-        setTitle("Thêm chi  tiết sản phẩm");
-        setSize(500, 730);
+        setTitle("Thêm chi tiết sản phẩm");
+        setSize(600, 530);
         setLayout(null);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setVisible(false);
@@ -122,6 +130,14 @@ public class dladdMatHangGUI extends JDialog {
         datengaysanxuat.setDateFormatString("dd/MM/yyyy");
         datengaysanxuat.setBounds(160, 170, 200, 25);
         add(datengaysanxuat);
+        datengaysanxuat.setDate(new Date());
+        datengaysanxuat.getDateEditor().getUiComponent().setEnabled(false);
+        datengaysanxuat.getDateEditor().getUiComponent().setFont(new Font("Serif",0,15));
+        datengaysanxuat.getDateEditor().getUiComponent().setBorder(lineBorder);
+        datengaysanxuat.getDateEditor().getUiComponent().setOpaque(true);
+        datengaysanxuat.getDateEditor().getUiComponent().setBackground(Color.white);
+        datengaysanxuat.getDateEditor().getUiComponent().setForeground(Color.black);
+        
         txthansudung= new JLabel("Hạn sử dụng");
         txthansudung.setBounds(30,200,150,25);
         txthansudung.setFont(new Font("Serif",1,18));
@@ -130,107 +146,226 @@ public class dladdMatHangGUI extends JDialog {
         datehansudung.setDateFormatString("dd/MM/yyyy");
         datehansudung.setBounds(160, 200, 200, 25);
         add(datehansudung);
+        datehansudung.setDate(new Date());
+        datehansudung.getDateEditor().getUiComponent().setEnabled(false);
+        datehansudung.getDateEditor().getUiComponent().setFont(new Font("Serif",0,15));
+        datehansudung.getDateEditor().getUiComponent().setBorder(lineBorder);
+        datehansudung.getDateEditor().getUiComponent().setOpaque(true);
+        datehansudung.getDateEditor().getUiComponent().setBackground(Color.white);
+        datehansudung.getDateEditor().getUiComponent().setForeground(Color.black);
         txtslnhap= new JLabel("SL nhập");
         txtslnhap.setBounds(30,230,150,25);
         txtslnhap.setFont(new Font("Serif",1,18));
         add(txtslnhap);
-        txtslban= new JLabel("SL bán");
-        txtslban.setBounds(30,260,150,25);
-        txtslban.setFont(new Font("Serif",1,18));
-        add(txtslban);
-        txtngaynhap= new JLabel("Ngày nhập");
-        txtngaynhap.setBounds(30,290,150,25);
-        txtngaynhap.setFont(new Font("Serif",1,18));
-        add(txtngaynhap);
-        datengaynhap = new JDateChooser();
-        datengaynhap.setDateFormatString("dd/MM/yyyy");
-        datengaynhap.setBounds(160, 290, 200, 25);
-        add(datengaynhap);
         txtvat= new JLabel("VAT");
-        txtvat.setBounds(30,320,150,25);
+        txtvat.setBounds(30,260,150,25);
         txtvat.setFont(new Font("Serif",1,18));
         add(txtvat);
         txtmalh= new JLabel("Mã LH");
-        txtmalh.setBounds(30,350,150,25);
+        txtmalh.setBounds(30,290,150,25);
         txtmalh.setFont(new Font("Serif",1,18));
         add(txtmalh);
         txtmadvt = new JLabel("Mã ĐVT");
-        txtmadvt.setBounds(30,380,150,25);
+        txtmadvt.setBounds(30,320,150,25);
         txtmadvt.setFont(new Font("Serif",1,18));
         add(txtmadvt);
-        
         
         tfmamh = new JTextField();
         tfmamh.setBounds(160,50,200,25);
         add(tfmamh);
+        tfmamh.setEditable(false);
         tften= new JTextField();
         tften.setBounds(160, 80, 200, 25);
         add(tften);
+        tbten= new JLabel();
+        tbten.setBounds(370, 80, 200, 25);
+        tbten.setForeground(Color.red);
+        add(tbten);
+        tften.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent e) {
+                    tbten.setText(null);
+            }
+            
+        });
         tfgiamua= new JTextField();
         tfgiamua.setBounds(160, 110, 200, 25);
         add(tfgiamua);
+        tbgiamua=new JLabel();
+        tbgiamua.setBounds(370, 110, 200, 25);
+        tbgiamua.setForeground(Color.red);
+        tbgiamua.setText(null);
+        tfgiamua.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String input=tfgiamua.getText();
+                    if(!input.matches("\\d+"))   
+                        tbgiamua.setText("Sai định dạng giá mua!");
+                    
+                    else
+                        tbgiamua.setText(null);
+            }
+            
+        });
+        add(tbgiamua);
         tfgiaban= new JTextField();
         tfgiaban.setBounds(160, 140, 200, 25);
         add(tfgiaban);
+        tbgiaban=new JLabel();
+        tbgiaban.setBounds(370, 140, 200, 25);
+        tbgiaban.setForeground(Color.red);
+        tbgiaban.setText(null);
+        add(tbgiaban);
+        tfgiaban.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String input=tfgiaban.getText();
+                    if(!input.matches("\\d+"))   
+                        tbgiaban.setText("Sai định dạng giá bán!");
+                    
+                    else
+                        tbgiaban.setText(null);
+            }
+            
+        });
         tfslnhap= new JTextField();
         tfslnhap.setBounds(160, 230, 200, 25);
         add(tfslnhap);
-        tfslban= new JTextField();
-        tfslban.setBounds(160, 260, 200, 25);
-        add(tfslban);
+        tbslnhap= new JLabel();
+        tbslnhap.setBounds(370, 230, 200, 25);
+        tbslnhap.setForeground(Color.red);
+        tbslnhap.setText(null);
+        add(tbslnhap);
+        tfslnhap.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String input=tfslnhap.getText();
+                    if(!input.matches("\\d+"))   
+                        tbslnhap.setText("Sai định dạng sl nhập!");
+                    
+                    else
+                        tbslnhap.setText(null);
+            }
+            
+        });
         tfvat= new JTextField();
-        tfvat.setBounds(160, 320, 200, 25);
+        tfvat.setBounds(160, 260, 200, 25);
         add(tfvat);
+        tbvat=new JLabel();
+        tbvat.setBounds(370, 260, 200, 25);
+        tbvat.setForeground(Color.red);
+        tbvat.setText(null);
+        add(tbvat);
+        tfvat.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String input=tfvat.getText();
+                    if(!input.matches("\\d+"))   
+                        tbvat.setText("Sai định dạng thuế VAT!");
+                    
+                    else
+                        tbvat.setText(null);
+            }
+            
+        });
         cmbloaihang= new JComboBox();
-        cmbloaihang.setBounds(160, 350, 200, 25);
+        cmbloaihang.setBounds(160, 290, 200, 25);
         add(cmbloaihang);
+        tblh= new JLabel();
+        tblh.setBounds(370, 290, 200, 25);
+        tblh.setForeground(Color.red);
+        add(tblh);
         cmbdvt= new JComboBox();
-        cmbdvt.setBounds(160, 380, 200, 25);
+        cmbdvt.setBounds(160, 320, 200, 25);
         addDVT();
         addLoaiHang();
         add(cmbdvt);
+        tbdvt= new JLabel();
+        tbdvt.setBounds(370, 320, 200, 25);
+        tbdvt.setForeground(Color.red);
+        add(tbdvt);
         btnadd= new JLabel();
         btnadd.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnAdd_150px.png")));
-        btnadd.setBounds(50, 550,200, 50);
+        btnadd.setBounds(50, 370,200, 50);
         btnadd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         add(btnadd);
-        
             btnadd.addMouseListener(new MouseAdapter(){
             @Override
             public void mousePressed(MouseEvent e) {
-                
-                String Mamh = tfmamh.getText();
+                    String Mamh=tfmamh.getText();
                     String tenmh = tften.getText();
                     String giamua = tfgiamua.getText();
-                    double sogiamua=Double.valueOf(giamua);
                     String giaban = tfgiaban.getText();
-                    double sogiaban= Double.valueOf(giaban);
+                    double sogiamua=0,sogiaban=0,soslnhap=0,sovat=0;
                     Date ngaysx = datengaysanxuat.getDate();
                     Date hansudung = datehansudung.getDate();
                     String slnhap = tfslnhap.getText();
-                    double soslnhap= Double.valueOf(slnhap);
-                    String slban = tfslban.getText();
-                    double soslban= Double.valueOf(slban);
-                    Date ngaynhap = datengaynhap.getDate();
                     String vat= tfvat.getText();
-                    double sovat= Double.valueOf(vat);
+                    String malh="",madvt="";
                     String malhtemp=cmbloaihang.getSelectedItem().toString();
-                    String malh = LoaiHangBUS.getIntance().laymatheotenloaihang(malhtemp);
                     String madvttemp=cmbdvt.getSelectedItem().toString();
-                    String madvt = DonViBUS.getIntance().laymatheotendonvitinh(madvttemp);
+                                try {
+                       if (tenmh.trim().isEmpty()||giamua.trim().isEmpty()||giaban.trim().isEmpty()||slnhap.trim().isEmpty()||vat.trim().isEmpty()||malhtemp.equalsIgnoreCase("Chọn loại")||madvttemp.equalsIgnoreCase("Chọn ĐVT")) {
+                           {
+                               throw new Exception("Các TextFiled, ComboBox không được để trống hoặc chưa chọn!");
+                           }   
+                           }
+                       sogiamua=Double.valueOf(giamua);
+                       sogiaban= Double.valueOf(giaban);
+                       soslnhap= Double.valueOf(slnhap);
+                       sovat= Double.valueOf(vat);
+                       malh = LoaiHangBUS.getIntance().laymatheotenloaihang(malhtemp);
+                       madvt = DonViBUS.getIntance().laymatheotendonvitinh(madvttemp);
+                       // Tiếp tục xử lý khi giá trị hợp lệ.
+
+                   } catch (Exception ex) {
+                       // Xử lý ngoại lệ ở đây, ví dụ như thông báo lỗi cho người dùng.
+                       JOptionPane.showMessageDialog(null, ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                       if(madvttemp.equalsIgnoreCase("Chọn ĐVT"))
+                           tbdvt.setText("Chưa chọn ĐVT!");
+                       if(malhtemp.equalsIgnoreCase("Chọn loại"))
+                           tblh.setText("Chưa chọn loại hàng!");
+                       if(tenmh.trim().isEmpty())
+                           tbten.setText("Chưa nhập tên!");
+                       if(giamua.trim().isEmpty())
+                           tbgiamua.setText("Chưa nhập giá mua!");
+                       if(giaban.trim().isEmpty())
+                           tbgiaban.setText("Chưa nhập giá bán!");
+                       if(slnhap.trim().isEmpty())
+                           tbslnhap.setText("Chưa nhập sl nhập!");
+                       if(vat.trim().isEmpty())
+                           tbvat.setText("Chưa nhập thuế VAT!");
+                   }
+                                
+                    Date ngaynhap = new Date();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    String formattedDate = dateFormat.format(ngaynhap);
+                    if(!malhtemp.equalsIgnoreCase("Chọn loại"))
+                        tblh.setText(null);
+                    if(!madvttemp.equalsIgnoreCase("Chọn ĐVT"))
+                        tbdvt.setText(null);
+                    
                     String img=temp2;
-                    MatHangDTO mh= new MatHangDTO(Mamh,tenmh,sogiamua,sogiaban,ngaysx,hansudung,soslnhap,soslban,ngaynhap,sovat,malh,madvt,img);
+                    MatHangDTO mh= new MatHangDTO(Mamh,tenmh,sogiamua,sogiaban,ngaysx,hansudung,soslnhap,0,ngaynhap,sovat,malh,madvt,img);
+                    if(!tenmh.trim().isEmpty()&&tbten.getText()==null&&tblh.getText()==null&&tbdvt.getText()==null&&!tenmh.trim().isEmpty()&&!giaban.trim().isEmpty()&&!giamua.trim().isEmpty()&&!slnhap.trim().isEmpty()&&!vat.trim().isEmpty()&&tbgiaban.getText()==null&&tbgiamua.getText()==null&&tbslnhap.getText()==null&&tbvat.getText()==null&&!madvt.equalsIgnoreCase(null)&&!malh.equalsIgnoreCase(null)){
                     mathangBUS.add(mh);
-                    MatHangGUI mhGUI= new MatHangGUI(1300);
-                    mhGUI.getDSSPFull();
-                     mhGUI.dem++;
                     cleanView();
+                    JOptionPane.showMessageDialog(null, "Thêm thành công");
+                    }
+//                    else
+//                    JOptionPane.showMessageDialog(null, "Thêm thất bại");
+                    
+                    
+                    
+                    
+                   
+
             }
             });
         
         btnimg= new JLabel();
         btnimg.setIcon(new ImageIcon(dladdMatHangGUI.class.getResource("/images/btnFile.png")));
-        btnimg.setBounds(250,550,200,50);
+        btnimg.setBounds(250,370,200,50);
         btnimg.setCursor(new Cursor(Cursor.HAND_CURSOR));
         add(btnimg);
         btnimg.addMouseListener(new MouseAdapter() {
@@ -274,7 +409,6 @@ public class dladdMatHangGUI extends JDialog {
         tfgiamua.setText("");
         tfgiaban.setText("");
         tfslnhap.setText("");
-        tfslban.setText("");
         tfvat.setText("");
         cmbloaihang.setSelectedItem("Chọn loại");
         cmbdvt.setSelectedItem("Chọn ĐVT");
@@ -301,8 +435,5 @@ public class dladdMatHangGUI extends JDialog {
         DefaultComboBoxModel<String>cbmodel=new DefaultComboBoxModel<>(vec);
         cmbdvt.setModel(cbmodel);
     }
-    
-    
-    
-    
+        
 }

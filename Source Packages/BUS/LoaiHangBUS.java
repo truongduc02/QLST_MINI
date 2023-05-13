@@ -24,7 +24,7 @@ public class LoaiHangBUS {
 		return LoaiHangDAO.getIntance().selectByChungLoai(maCl);
 	}
     public LoaiHangDTO getLoaiHangByID(LoaiHangDTO lh) {
-		return loaihangDAO.getIntance().selectById(lh);
+		return LoaiHangDAO.getIntance().selectById(lh);
 	}
     public String laymatheotenloaihang(String tenloaihang)
     {

@@ -20,7 +20,8 @@ public class MatHangBUS {
 	}
     public ArrayList<MatHangDTO> getList()
     {
-        return MatHangDAO.getInstance().selectAll();
+        listMatHang=mathangdao.selectAll();
+        return listMatHang;
     }
     public String getAnh(String ma)
     {

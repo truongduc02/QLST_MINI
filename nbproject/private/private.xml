@@ -5,24 +5,20 @@
             <url>Source%20Packages/DAO/MatHangDAO.java</url>
             <bookmark id="1">
                 <name/>
-                <line>38</line>
+                <line>46</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/DTO/MatHangDTO.java</file>
-            <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/DAO/NhaCungCapDAO.java</file>
             <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/GUI/MatHangGUI.java</file>
             <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/GUI/QLSieuThi.java</file>
             <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/GUI/dladdMatHangGUI.java</file>
             <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/GUI/NhaCungCapGUI.java</file>
             <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/DAO/MatHangDAO.java</file>
-            <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/DAO/DonViDAO.java</file>
             <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/BUS/MatHangBUS.java</file>
             <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/GUI/dleditMatHangGUI.java</file>
-            <file>file:/C:/Users/Admin/OneDrive/Documents/NetBeansProjects/QLST_MINI/Source%20Packages/GUI/NhapHangGUI.java</file>
         </group>
     </open-files>
 </project-private>
