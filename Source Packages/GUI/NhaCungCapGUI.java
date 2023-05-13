@@ -45,6 +45,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -81,12 +82,12 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
     private JLabel title,btnchonanh,txtrefresh,txtsearch,img,btnadd,btnedit,btndelete,lbmasp,lbloaisp,lbgiafrom,lbgiato,btnsearch,btnxuatfile,btnnhapfile;
     private JLabel buttons[];
     private JTextField textfields[],tftimkiem,tfmasp,tfloaisp;
-    private ImageIcon icon1;
-    private JPanel filter;
     private NhaCungCapBUS nhacungcapBus;
-    private String []title1= { "Mã NCC", "Tên NCC", "Địa chỉ", "Điện thoại"};
+    private final String []title1= { "Mã NCC", "Tên NCC", "Địa chỉ", "Điện thoại"};
     private DefaultTableModel tb1,model1;
     private JComboBox cmbChoice;
+    String maNCC="";
+    private  JLabel tbten,tbdiachi,tbdienthoai;
     public void init()
     {
         setLayout(null);
@@ -110,6 +111,7 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
                       loadDataLenBangSanPham();
                       cleanView();
                       tftimkiem.setText("");
+                      textfields[0].setText(maNCC);
                       cmbChoice.setSelectedItem("Tên NCC");
                         
              }
@@ -143,16 +145,44 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
         cmbChoice.addItem("Tên NCC");
         cmbChoice.addItem("Địa chỉ");
         cmbChoice.addItem("SĐT");
-        cmbChoice.setBounds(210,270,120,25);
+        cmbChoice.setBounds(210,280,120,25);
         add(cmbChoice);
         
        
         tftimkiem = new JTextField();
         tftimkiem.setBackground(Color.WHITE);
         //tftimkiem.setOpaque(false);
-        tftimkiem.setBounds(new Rectangle(330, 270, 400, 25));
+        tftimkiem.setBounds(new Rectangle(330, 280, 400, 25));
         tftimkiem.setFont(new Font("Serif",0,15));
         add(tftimkiem);
+        
+        tbten=new JLabel();
+        tbten.setBounds(800, 100,200, 50);
+        tbten.setForeground(Color.red);
+        add(tbten);
+        
+        tbdiachi= new JLabel();
+        tbdiachi.setBounds(800, 135,200, 50);
+        tbdiachi.setForeground(Color.red);
+        add(tbdiachi);
+        
+        tbdienthoai= new JLabel();
+        tbdienthoai.setBounds(800, 170,200, 50);
+        tbdienthoai.setForeground(Color.red);
+        tbdienthoai.setText(null);
+        add(tbdienthoai);
+       textfields[3].addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String input= textfields[3].getText();
+                if(!input.matches("^(\\d{10}|\\d{11})$"))
+                    tbdienthoai.setText("Sai định dạng điện thoại!");
+                else
+                    tbdienthoai.setText(null);
+                    
+            }
+            
+        });
         
         
        textfields[0].setEditable(false);
@@ -160,7 +190,7 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
         
         btnadd= new JLabel();
         btnadd.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnAdd_150px.png")));
-        btnadd.setBounds(800, 65,200, 50);
+        btnadd.setBounds(200, 220,200, 50);
         btnadd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnadd.addMouseListener(new MouseAdapter(){
             public void mouseClicked(MouseEvent e)
@@ -168,20 +198,36 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
                       int i= getmanhacungcap();
                       i++;
                       String number= String.valueOf(i);
-                      String maNCC= "NCC"+ number ;
+                      maNCC= "NCC"+ number ;
                         String tenNCC = textfields[1].getText();
                         String diaChi = textfields[2].getText();
                         String dienThoai = textfields[3].getText();
+                        try{
+                            if(tenNCC.trim().isEmpty()||diaChi.trim().isEmpty()||dienThoai.trim().isEmpty())
+                                throw new Exception("Các TextFiled không được để trống!");
+                        }catch(Exception ex)
+                        {
+                             JOptionPane.showMessageDialog(null, ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                             if(tenNCC.trim().isEmpty())
+                                 tbten.setText("Chưa nhập tên!");
+                             if(diaChi.trim().isEmpty())
+                                 tbdiachi.setText("Chưa nhập địa chỉ!");
+                             if(dienThoai.trim().isEmpty())
+                                 tbdienthoai.setText("Chưa nhập số điện thoại");
+                        }
                         NhaCungCapDTO ncc= new NhaCungCapDTO(maNCC, tenNCC, diaChi, dienThoai);
+                        if(!tenNCC.trim().isEmpty()&&tbten.getText()==null&&!diaChi.trim().isEmpty()&&tbdiachi.getText()==null&&!dienThoai.trim().isEmpty()&&tbdienthoai.getText()==null)
+                        {
                         nhacungcapBus.add(ncc);
                         loadDataLenBangSanPham();
                         cleanView();
+                        }
                         
              }
         });
         btnedit = new JLabel();
         btnedit.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnEdit_150px.png")));
-        btnedit.setBounds(800, 115,200, 50);
+        btnedit.setBounds(400, 220,200, 50);
         btnedit.setCursor(new Cursor(Cursor.HAND_CURSOR));      
         btnedit.addMouseListener(new MouseAdapter(){
             public void mouseClicked(MouseEvent e)
@@ -190,17 +236,32 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
                         String tenNCC = textfields[1].getText();
                         String diaChi = textfields[2].getText();
                         String dienThoai = textfields[3].getText();
-                        
+                         try{
+                            if(tenNCC.trim().isEmpty()||diaChi.trim().isEmpty()||dienThoai.trim().isEmpty())
+                                throw new Exception("Các TextFiled không được để trống!");
+                        }catch(Exception ex)
+                        {
+                             JOptionPane.showMessageDialog(null, ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                             if(tenNCC.trim().isEmpty())
+                                 tbten.setText("Chưa nhập tên!");
+                             if(diaChi.trim().isEmpty())
+                                 tbdiachi.setText("Chưa nhập địa chỉ!");
+                             if(dienThoai.trim().isEmpty())
+                                 tbdienthoai.setText("Chưa nhập số điện thoại");
+                        }
                         NhaCungCapDTO ncc= new NhaCungCapDTO(maNCC, tenNCC, diaChi, dienThoai);
+                        if(!tenNCC.trim().isEmpty()&&tbten.getText()==null&&!diaChi.trim().isEmpty()&&tbdiachi.getText()==null&&!dienThoai.trim().isEmpty()&&tbdienthoai.getText()==null)
+                        {
                         nhacungcapBus.sua(ncc);
                         loadDataLenBangSanPham();
                         cleanView();
+                        }
                         
              }
         });
         btndelete = new JLabel();
         btndelete.setIcon(new ImageIcon(MatHangGUI.class.getResource("/images/btnDelete_150px.png")));
-        btndelete.setBounds(800, 165,200, 50);
+        btndelete.setBounds(600, 220,200, 50);
         btndelete.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btndelete.addMouseListener(new MouseAdapter(){
             public void mouseClicked(MouseEvent e)
@@ -342,9 +403,9 @@ public class NhaCungCapGUI extends JPanel implements ActionListener{
     }
     public void cleanView() //Xóa trắng các TextField
     {
-         textfields[0].setEditable(true);
+        textfields[0].setText(maNCC);
+         textfields[0].setEditable(false);
 
-        textfields[0].setText("");
          textfields[1].setText("");
          textfields[2].setText("");
          textfields[3].setText("");
